@@ -7,35 +7,76 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main>
-    <h1>投稿詳細</h1>
-    <nav>
-        <a th:href="${searchPerformed} ? @{/posts(q=${q})} : @{/posts}">一覧に戻る</a>
-    </nav>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="メインナビゲーション">
+        <a class="brand" th:href="@{/posts}">社内つぶやき</a>
+        <nav class="primary-nav">
+            <a class="primary-nav__link" th:href="${searchPerformed} ? @{/posts(q=${q})} : @{/posts}">ホーム</a>
+        </nav>
+    </aside>
 
-    <article class="post post--detail">
-        <dl class="post-detail">
-            <div class="post-detail__row">
-                <dt>ID</dt>
-                <dd th:text="${post.id}">1</dd>
-            </div>
-            <div class="post-detail__row">
-                <dt>投稿者</dt>
-                <dd th:text="${post.author}">投稿者</dd>
-            </div>
-            <div class="post-detail__row">
-                <dt>本文</dt>
-                <dd class="post__body" th:text="${post.body}">本文</dd>
-            </div>
-            <div class="post-detail__row">
-                <dt>投稿日時</dt>
-                <dd>
-                    <time th:datetime="${post.createdAt}"
-                          th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-23 09:00</time>
-                </dd>
-            </div>
-        </dl>
-    </article>
-</main>
+    <main class="timeline">
+        <header class="timeline-header">
+            <a class="back-link" th:href="${searchPerformed} ? @{/posts(q=${q})} : @{/posts}">一覧に戻る</a>
+            <h1>投稿詳細</h1>
+        </header>
+
+        <article class="post post--detail">
+            <dl class="post-detail">
+                <div class="post-detail__row">
+                    <dt>ID</dt>
+                    <dd th:text="${post.id}">1</dd>
+                </div>
+                <div class="post-detail__row">
+                    <dt>投稿者</dt>
+                    <dd th:text="${post.author}">投稿者</dd>
+                </div>
+                <div class="post-detail__row">
+                    <dt>本文</dt>
+                    <dd class="post__body" th:text="${post.body}">本文</dd>
+                </div>
+                <div class="post-detail__row">
+                    <dt>投稿日時</dt>
+                    <dd>
+                        <time th:datetime="${post.createdAt}"
+                              th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2026-05-23 09:00</time>
+                    </dd>
+                </div>
+                <div class="post-detail__row">
+                    <dt>いいね数</dt>
+                    <dd class="like-control">
+                        <span class="like-count" th:text="${post.likeCount}">0</span>
+                        <form class="like-form"
+                              method="post"
+                              th:action="${searchPerformed} ? @{/posts/{id}/likes(id=${post.id}, q=${q})}
+                                      : @{/posts/{id}/likes(id=${post.id})}">
+                            <input type="hidden"
+                                   th:if="${_csrf != null}"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}">
+                            <button class="like-switch"
+                                    th:classappend="${likedByClient} ? ' like-switch--on' : ''"
+                                    type="submit"
+                                    role="switch"
+                                    th:attr="aria-checked=${likedByClient}"
+                                    aria-label="Like">
+                                <span class="like-switch__track" aria-hidden="true">
+                                    <span class="like-switch__thumb"></span>
+                                </span>
+                            </button>
+                        </form>
+                    </dd>
+                </div>
+            </dl>
+        </article>
+    </main>
+
+    <aside class="right-rail" aria-label="補助情報">
+        <section class="rail-panel">
+            <h2>会話</h2>
+            <p>投稿の詳細とリアクションを確認できます。</p>
+        </section>
+    </aside>
+</div>
 </body>
 </html>
